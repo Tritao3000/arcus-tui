@@ -80,11 +80,12 @@
             /* small arch mark, top-left of the column */
             /* negative margin cancels the arch's internal guide padding so it sits flush left with the text */
             .mark {
-                --mw: clamp(150px, 19vh, 188px);
-                width: var(--mw);
+                --mark-size: 185px;
+                width: var(--mark-size);
+                max-width: 100%;
                 height: auto;
                 margin-bottom: 30px;
-                margin-left: calc(var(--mw) * -0.15);
+                margin-left: calc(var(--mark-size) * -0.15);
                 overflow: visible;
             }
             .mark .guides {
@@ -93,40 +94,52 @@
             }
             .mark .guides * {
                 fill: none;
-                stroke: #3d3d3d;
-                stroke-width: 1.15;
-                stroke-dasharray: 3 5;
+                stroke: #3a3a3a;
+                stroke-width: 1;
+                stroke-dasharray: 3 7;
             }
             .mark .spin {
                 transform-origin: 200px 200px;
                 animation: spin 60s linear infinite;
             }
+
             .mark .build * {
                 fill: none;
                 stroke: var(--text);
-                stroke-width: 1.7;
+                stroke-width: 1.6;
                 stroke-linecap: round;
                 stroke-linejoin: round;
             }
-            /* single arch silhouette: draws in, then marches */
             .mark .arch {
-                stroke-width: 2;
                 stroke-dasharray: 5 6;
                 transform-box: fill-box;
                 transform-origin: center;
                 animation:
                     rise 1s cubic-bezier(0.2, 0.7, 0.2, 1) both 0.35s,
-                    march 2.8s linear infinite;
+                    march-arch 2.6s linear infinite;
             }
-            /* the crowning circle pops in last */
-            .mark .build circle {
-                stroke-width: 1.8;
+            .mark .nodes circle {
                 stroke-dasharray: 4 5;
                 transform-box: fill-box;
                 transform-origin: center;
                 animation:
-                    pop 0.55s cubic-bezier(0.2, 0.85, 0.25, 1) both 1.1s,
-                    march 2.8s linear infinite;
+                    pop 0.55s cubic-bezier(0.2, 0.85, 0.25, 1) both,
+                    march-node 2.6s linear infinite;
+            }
+            .mark .nodes circle:nth-of-type(1) {
+                animation-delay: 0.85s, 0s;
+            }
+            .mark .nodes circle:nth-of-type(2) {
+                animation-delay: 1s, 0s;
+            }
+            .mark .nodes circle:nth-of-type(3) {
+                animation-delay: 1s, 0s;
+            }
+            .mark .nodes circle:nth-of-type(4) {
+                animation-delay: 1.15s, 0s;
+            }
+            .mark .nodes circle:nth-of-type(5) {
+                animation-delay: 1.15s, 0s;
             }
 
             @keyframes fade {
@@ -134,9 +147,14 @@
                     opacity: 1;
                 }
             }
-            @keyframes march {
+            @keyframes march-arch {
                 to {
-                    stroke-dashoffset: -26;
+                    stroke-dashoffset: -22;
+                }
+            }
+            @keyframes march-node {
+                to {
+                    stroke-dashoffset: -18;
                 }
             }
             @keyframes spin {
@@ -411,23 +429,28 @@
                         <line x1="40" y1="200" x2="360" y2="200" />
                         <line x1="130" y1="60" x2="130" y2="340" />
                         <line x1="270" y1="60" x2="270" y2="340" />
-                        <line x1="60" y1="290" x2="340" y2="290" />
                         <line x1="60" y1="60" x2="340" y2="340" />
                         <line x1="340" y1="60" x2="60" y2="340" />
                     </g>
+
                     <g class="build">
-                        <!-- one continuous arch silhouette: stepped pediment, cornice,
-                             columns with flared bases, and the central archway opening -->
+                        <!-- the arch: two legs rising to a semicircular crown -->
                         <path
                             class="arch"
-                            d="M48 362 L48 326 L66 326 L66 206 L48 206 L48 182
-                               L74 182 L74 150 L160 150 L160 108 L240 108 L240 150
-                               L326 150 L326 182 L352 182 L352 206 L334 206 L334 326
-                               L352 326 L352 362 L262 362 L262 196
-                               A62 62 0 0 0 138 196 L138 362 Z"
+                            d="M110 300 L110 200 A90 90 0 0 1 290 200 L290 300"
                         />
-                        <!-- crowning element -->
-                        <circle cx="200" cy="86" r="22" />
+                        <g class="nodes">
+                            <circle cx="200" cy="110" r="15" />
+                            <!-- crown / keystone -->
+                            <circle cx="110" cy="200" r="13" />
+                            <!-- left springline -->
+                            <circle cx="290" cy="200" r="13" />
+                            <!-- right springline -->
+                            <circle cx="110" cy="300" r="13" />
+                            <!-- left base -->
+                            <circle cx="290" cy="300" r="13" />
+                            <!-- right base -->
+                        </g>
                     </g>
                 </svg>
 
