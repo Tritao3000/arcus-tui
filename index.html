@@ -30,6 +30,13 @@
             html,
             body {
                 height: 100%;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            html::-webkit-scrollbar,
+            body::-webkit-scrollbar,
+            #term::-webkit-scrollbar {
+                display: none;
             }
 
             body {
@@ -46,6 +53,8 @@
                 width: 100%;
                 overflow-y: auto;
                 padding: clamp(20px, 5vw, 56px) 0;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
             }
 
             /* left-anchored terminal column, vertically centered */
@@ -474,7 +483,7 @@
                     <div class="hline"><span class="pl">&gt;</span> we run them to find exceptional builders in portugal — the ones who don't apply.</div>
                     <div class="hline spacer"></div>
                     <div class="hline"><span class="cmt"># how it works</span></div>
-                    <div class="hline"><span class="pl">&gt;</span> run <span class="w">ssh arcus.sh</span> — the brief, the puzzle, the submission all live there.</div>
+                    <div class="hline"><span class="pl">&gt;</span> run <span class="w">ssh augustalabs.ai</span> — the brief, the puzzle, the submission all live there.</div>
                     <div class="hline"><span class="pl">&gt;</span> no signup, no browser. just the terminal.</div>
                     <div class="hline spacer"></div>
                     <div class="hline"><span class="cmt"># prizes</span></div>
@@ -492,7 +501,7 @@
 
         <script>
             (function () {
-                const SSH_COMMAND = "ssh arcus.sh";
+                const SSH_COMMAND = "ssh augustalabs.ai";
 
                 // ── challenge config ──────────────────────────────────────────
                 const SUBMISSIONS = 0;
