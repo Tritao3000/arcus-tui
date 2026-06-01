@@ -253,7 +253,6 @@
                 display: inline;
                 opacity: 1;
             }
-
             /* prize / time-left info lines */
             .line.info {
                 display: grid;
@@ -530,6 +529,16 @@
             }
 
             @media (max-width: 600px) {
+                .line.ssh-copy .hint,
+                .terminal-line.ssh-copy .hint,
+                .line.ssh-copy:hover:not(.copied):not(.copy-cooldown) .hint,
+                .terminal-line.ssh-copy:hover:not(.copied):not(.copy-cooldown) .hint,
+                .line.ssh-copy.copied .hint,
+                .terminal-line.ssh-copy.copied .hint {
+                    display: none;
+                    opacity: 0;
+                    transition: none;
+                }
                 .terminal-prize {
                     grid-template-columns: 1fr;
                     row-gap: 0;
