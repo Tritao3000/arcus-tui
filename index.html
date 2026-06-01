@@ -621,14 +621,14 @@
                         prizes: [
                             ["first blood", "1000€", "first to find the flag"],
                             ["best write-up", "2000€", "clearest, most original solution"],
-                            ["standout work", "interview", "exceptional reasoning, flag or not"],
+                            ["standout work", "hired", "exceptional reasoning, flag or not"],
                         ],
                     },
                     submission: {
                         title: "submission - how to submit your answer",
                         lines: [
                             "email arcus@augustalabs.ai with:",
-                            "  1. write-up    how you got there    (required)",
+                            "  1. write-up    how you got there       (required)",
                             "  2. proof       id from correct flag    (optional)",
                             "the write-up is your shot at the 2000€ best write-up, flag or not.",
                             "the proof is your shot at the 1000€ first blood, if you find it first.",
@@ -969,7 +969,7 @@
                             }
                             if (text.startsWith("  1. write-up")) {
                                 line.innerHTML =
-                                    '<span class="pl">&gt;</span>  1. <span class="w">write-up</span>    how you got there    (required)';
+                                    '<span class="pl">&gt;</span>  1. <span class="w">write-up</span>    how you got there       (required)';
                                 block.appendChild(line);
                                 return;
                             }
