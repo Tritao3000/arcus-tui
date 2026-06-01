@@ -57,16 +57,16 @@
                 -ms-overflow-style: none;
             }
 
-            /* left-anchored terminal column, vertically centered */
+            /* left-anchored terminal column with a stable start position */
             .wrap {
                 max-width: 680px;
-                min-height: calc(100% - 40px);
+                min-height: 100%;
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
-                justify-content: center;
+                justify-content: flex-start;
                 text-align: left;
-                padding: 64px 0;
+                padding: clamp(32px, 9vh, 80px) 0 64px;
             }
 
             /* small arch mark, top-left of the column */
@@ -552,6 +552,7 @@
                     { t: SSH_COMMAND, cls: "title ssh-copy", pl: "$", copy: true },
                 ];
 
+                const termEl = document.getElementById("term");
                 const linesEl = document.getElementById("lines");
                 const terminalShell = document.getElementById("terminalShell");
                 const terminalHistory = document.getElementById("terminalHistory");
@@ -872,6 +873,13 @@
                     terminalHistory.appendChild(block);
                 }
 
+                function scrollToTerminalEnd() {
+                    requestAnimationFrame(() => {
+                        termEl.scrollTop = termEl.scrollHeight;
+                        window.scrollTo(0, document.documentElement.scrollHeight);
+                    });
+                }
+
                 function renderHeading(parent, title) {
                     const heading = document.createElement("div");
                     heading.className = "terminal-heading";
@@ -950,6 +958,7 @@
                     if (normalized === "clear") {
                         clearAsciiTimers();
                         terminalHistory.innerHTML = "";
+                        scrollToTerminalEnd();
                         return;
                     }
 
@@ -976,7 +985,7 @@
                         });
                     }
 
-                    terminalShell.scrollIntoView({ block: "nearest" });
+                    scrollToTerminalEnd();
                 }
 
                 async function typeLine(target, html, speed) {
