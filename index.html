@@ -480,16 +480,22 @@
                 animation: blink 1.05s step-end infinite;
             }
 
-            @media (max-width: 360px) {
+            @media (max-width: 600px) {
                 .terminal-list,
                 .terminal-prize {
                     grid-template-columns: 1fr;
                     row-gap: 0;
                 }
+                .terminal-prize span {
+                    white-space: normal;
+                }
+                .terminal-prize .amount {
+                    white-space: nowrap;
+                }
                 .terminal-list > div:nth-child(2n),
                 .terminal-prize .amount,
                 .terminal-prize .detail {
-                    padding-left: 18px;
+                    padding-left: calc(1ch + 18px);
                 }
             }
 
