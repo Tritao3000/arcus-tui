@@ -237,17 +237,20 @@
             .terminal-line.ssh-copy .hint {
                 margin-left: 12px;
                 color: var(--dim);
+                display: none;
                 opacity: 0;
                 transition: opacity 0.18s ease, color 0.18s ease;
             }
             .line.ssh-copy:hover:not(.copied):not(.copy-cooldown) .hint,
             .terminal-line.ssh-copy:hover:not(.copied):not(.copy-cooldown) .hint {
                 color: var(--muted);
+                display: inline;
                 opacity: 1;
             }
             .line.ssh-copy.copied .hint,
             .terminal-line.ssh-copy.copied .hint {
                 color: var(--text);
+                display: inline;
                 opacity: 1;
             }
 
@@ -404,13 +407,22 @@
                 color: #d8a948;
             }
             .terminal-list {
+                display: flex;
+                flex-direction: column;
+                row-gap: 1px;
+            }
+            .terminal-help-row {
                 display: grid;
                 grid-template-columns: minmax(120px, 220px) minmax(220px, 1fr);
                 column-gap: 34px;
-                row-gap: 1px;
+                align-items: baseline;
             }
             .terminal-list .cmd-name {
                 color: var(--text);
+            }
+            .terminal-list .cmd-desc {
+                min-width: 0;
+                white-space: normal;
             }
             .terminal-list .accent {
                 color: #d96a62;
@@ -456,14 +468,14 @@
             .terminal-line.submission-numbered {
                 align-items: start;
             }
-            .terminal-line:not(.terminal-prize).ssh-copy {
-                column-gap: 10px;
+            .terminal-line.ssh-copy .tx {
+                color: var(--text);
             }
-            .terminal-line.ssh-copy .pl {
+            .line.ssh-copy .pl {
                 font-size: 11px;
                 letter-spacing: 0.14em;
             }
-            .terminal-line.ssh-copy .tx {
+            .line.ssh-copy .tx {
                 color: var(--text);
                 letter-spacing: 0.05em;
             }
@@ -518,10 +530,13 @@
             }
 
             @media (max-width: 600px) {
-                .terminal-list,
                 .terminal-prize {
                     grid-template-columns: 1fr;
                     row-gap: 0;
+                }
+                .terminal-help-row {
+                    grid-template-columns: minmax(92px, max-content) minmax(0, 1fr);
+                    column-gap: 18px;
                 }
                 .terminal-prize span {
                     white-space: normal;
@@ -529,7 +544,6 @@
                 .terminal-prize .amount {
                     white-space: nowrap;
                 }
-                .terminal-list > div:nth-child(2n),
                 .terminal-prize .amount,
                 .terminal-prize .detail {
                     padding-left: calc(1ch + 18px);
@@ -978,12 +992,16 @@
                     const list = document.createElement("div");
                     list.className = "terminal-list";
                     HELP_ROWS.forEach(([name, description]) => {
+                        const row = document.createElement("div");
+                        row.className = "terminal-help-row";
                         const left = document.createElement("div");
                         left.className = "cmd-name";
                         left.textContent = name;
                         const right = document.createElement("div");
+                        right.className = "cmd-desc";
                         right.textContent = description;
-                        list.append(left, right);
+                        row.append(left, right);
+                        list.appendChild(row);
                     });
                     parent.appendChild(list);
                     const note = document.createElement("div");
@@ -1190,6 +1208,7 @@
                         ta.remove();
                     }
                     if (!targetLine) return;
+                    if (window.matchMedia("(max-width: 600px)").matches) return;
                     const hint = targetLine.querySelector(".hint");
                     if (hint) hint.textContent = "# copied";
                     targetLine.classList.add("copied");
