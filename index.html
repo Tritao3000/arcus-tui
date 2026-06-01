@@ -571,67 +571,74 @@
                 const asciiTimers = [];
 
                 const HELP_ROWS = [
-                    ["start", "how to participate"],
-                    ["arcus", "what is this"],
-                    ["prize", "what are the prizes"],
-                    ["submission", "how to submit your answer"],
-                    ["write-up", "what is a good write-up"],
-                    ["contact", "submissions and further queries"],
-                    ["whois", "learn about us"],
-                    ["clear", "to clear all queries"],
+                    ["start", "how to begin"],
+                    ["arcus", "what this is"],
+                    ["prize", "what you can win"],
+                    ["submission", "how to submit"],
+                    ["write-up", "what makes a good one"],
+                    ["contact", "reach us"],
+                    ["whois", "about us"],
+                    ["clear", "clear the screen"],
                 ];
 
                 const COMMANDS = {
                     start: {
                         title: "start - how to participate",
                         lines: [
-                            'To start, run <span class="w">ssh augustalabs.ai</span> on your terminal. No sign up needed.',
+                            "open a terminal and run:",
+                            "ssh augustalabs.ai",
+                            "no account needed. just connect.",
                         ],
                     },
                     arcus: {
                         title: "arcus - what is this",
                         lines: [
-                            "we're looking for the best talent in Portugal.",
-                            "to find it, we're rolling out a series of engineering trials - called the Arcus Prize.",
-                            "the first trial is Ode Triunfal.",
+                            "we're after the best talent in portugal.",
+                            "so we built a series of trials to find you.",
+                            "it starts with ode triunfal.",
                         ],
                     },
                     prize: {
                         title: "prize - list all prizes",
                         prizes: [
-                            ["first blood", "1000€", "— first to solve"],
-                            ["best write-up", "2000€", "— clearest solution"],
-                            ["standout work", "get hired", "— XXX"],
+                            ["first blood", "1000€", "first to find the flag"],
+                            ["best write-up", "2000€", "clearest, most original solution"],
+                            ["standout work", "interview", "exceptional reasoning, flag or not"],
                         ],
                     },
                     submission: {
                         title: "submission - how to submit your answer",
                         lines: [
-                            'To submit your answer email us at <a href="mailto:arcus@augustalabs.ai">arcus@augustalabs.ai</a> with (1) proof and (2) write-up.',
-                            "(1) Proof, a unique identifier, will be provided to you once you submit the correct flag.",
-                            "(2) Write-up, should explain your resolution rationale. for more info run /write-up",
-                            "You have unlimited write-up submissions. Don't wait until the time ends to submit, we'll be interviewing people on a rolling basis.",
-                            "We want to reward ingenious ways of solving problems. For this, all write-up submissions are eligible for the 2000 euros prize (even if you don't find the flag), with the first solver being awarded 1000 euros.",
+                            "email arcus@augustalabs.ai with two things:",
+                            "1. proof      the unique id provided when your flag is correct",
+                            "2. write-up   how you got there",
+                            "you can submit as many times as you want.",
+                            "we review on a rolling basis, and interview as we go.",
+                            "the first to find the flag wins 1000€.",
+                            "the best write-up wins 2000€, even without the flag.",
                         ],
                     },
                     "write-up": {
                         title: "write-up - what is a good write-up",
                         lines: [
-                            "The best write-ups explain a unique solving rationale in an original manner. You can use your preferred medium to best portray your approach (pdf, html, website, etc).",
-                            "We want to know about all the rabbit holes you fell into and your unique problem solving methodology.",
-                            "For example, if you built your own tool, please share why you did it, how you did it and how it helped you.",
+                            "the best write-ups show how you think, not just what you found.",
+                            "walk us through the method: the dead ends, the rabbit holes, how you got there.",
+                            "built a tool along the way? tell us why, and what it did for you.",
+                            "use any format that fits: pdf, html, mp4, your call.",
                         ],
                     },
                     contact: {
                         title: "contact - submissions and further queries",
                         lines: [
-                            'to submit all solutions and further queries you can contact us at <a href="mailto:arcus@augustalabs.ai">arcus@augustalabs.ai</a>',
+                            "arcus@augustalabs.ai for submissions and anything else.",
                         ],
                     },
                     "whois augustalabs": {
                         title: "whois AugustaLabs - learn about us",
                         lines: [
-                            "Augusta Labs is an applied AI lab solving AI transformation problems @Guilherme Garcia",
+                            "augusta labs is an applied ai lab based in lisbon, founded in 2024.",
+                            "we lead ai transformation for some of the world's most demanding companies.",
+                            "clients include fortune 500 enterprises, major private equity firms, and government agencies.",
                         ],
                     },
                 };
@@ -909,7 +916,7 @@
                     parent.appendChild(list);
                     const note = document.createElement("div");
                     note.className = "terminal-note";
-                    note.textContent = "run any command above for details";
+                    note.textContent = "type any command for details";
                     parent.appendChild(note);
                 }
 
