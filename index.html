@@ -405,14 +405,26 @@
                 min-height: 1.7em;
                 white-space: pre-wrap;
             }
+            .terminal-line:not(.terminal-prize) {
+                display: grid;
+                grid-template-columns: max-content minmax(0, 1fr);
+                column-gap: 18px;
+                align-items: baseline;
+            }
             .terminal-line .pl {
                 color: var(--dim);
-                margin-right: 18px;
+                margin-right: 0;
+            }
+            .terminal-line .tx {
+                min-width: 0;
+                white-space: pre-wrap;
+            }
+            .terminal-line:not(.terminal-prize).ssh-copy {
+                column-gap: 10px;
             }
             .terminal-line.ssh-copy .pl {
                 font-size: 11px;
                 letter-spacing: 0.14em;
-                margin-right: 10px;
             }
             .terminal-line.ssh-copy .tx {
                 color: var(--text);
@@ -431,6 +443,9 @@
                 grid-template-columns: 152px 68px minmax(150px, 1fr);
                 column-gap: 6px;
                 align-items: baseline;
+            }
+            .terminal-prize .pl {
+                margin-right: 18px;
             }
             .terminal-prize span {
                 white-space: nowrap;
@@ -959,34 +974,35 @@
                                 const tx = document.createElement("span");
                                 tx.className = "tx";
                                 tx.textContent = text;
-                                line.append(pl, " ", tx);
+                                line.append(pl, tx);
                                 wireSshCopyLine(line);
                                 block.appendChild(line);
                                 return;
                             }
                             if (text.startsWith("  1. write-up")) {
                                 line.innerHTML =
-                                    '<span class="pl">&gt;</span>  1. <span class="w">write-up</span>    how you got there       (required)';
+                                    '<span class="pl">&gt;</span><span class="tx">  1. <span class="w">write-up</span>    how you got there       (required)</span>';
                                 block.appendChild(line);
                                 return;
                             }
                             if (text.startsWith("  2. proof")) {
                                 line.innerHTML =
-                                    '<span class="pl">&gt;</span>  2. <span class="w">proof</span>       id from correct flag    (optional)';
+                                    '<span class="pl">&gt;</span><span class="tx">  2. <span class="w">proof</span>       id from correct flag    (optional)</span>';
                                 block.appendChild(line);
                                 return;
                             }
                             if (text.includes("arcus@augustalabs.ai")) {
                                 line.innerHTML =
-                                    '<span class="pl">&gt;</span>' +
+                                    '<span class="pl">&gt;</span><span class="tx">' +
                                     text.replace(
                                         "arcus@augustalabs.ai",
                                         '<span class="w">arcus@augustalabs.ai</span>'
-                                    );
+                                    ) +
+                                    "</span>";
                                 block.appendChild(line);
                                 return;
                             }
-                            line.innerHTML = '<span class="pl">&gt;</span>' + text;
+                            line.innerHTML = '<span class="pl">&gt;</span><span class="tx">' + text + "</span>";
                             block.appendChild(line);
                         });
                     }
@@ -1103,7 +1119,10 @@
                     const hint = document.createElement("span");
                     hint.className = "hint";
                     hint.textContent = "# copy to clipboard";
-                    line.appendChild(hint);
+                    const hintParent = line.classList.contains("terminal-line")
+                        ? line.querySelector(".tx") || line
+                        : line;
+                    hintParent.appendChild(hint);
                     line.addEventListener("click", () => copyCommand(line));
                     line.addEventListener("mouseleave", () => {
                         line.classList.remove("copy-cooldown");
