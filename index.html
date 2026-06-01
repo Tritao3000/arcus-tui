@@ -216,21 +216,25 @@
                 color: var(--text);
                 letter-spacing: 0.05em;
             }
-            .line.ssh-copy {
+            .line.ssh-copy,
+            .terminal-line.ssh-copy {
                 cursor: pointer;
                 user-select: none;
             }
-            .line.ssh-copy .hint {
+            .line.ssh-copy .hint,
+            .terminal-line.ssh-copy .hint {
                 margin-left: 12px;
                 color: var(--dim);
                 opacity: 0;
                 transition: opacity 0.18s ease, color 0.18s ease;
             }
-            .line.ssh-copy:hover:not(.copied):not(.copy-cooldown) .hint {
+            .line.ssh-copy:hover:not(.copied):not(.copy-cooldown) .hint,
+            .terminal-line.ssh-copy:hover:not(.copied):not(.copy-cooldown) .hint {
                 color: var(--muted);
                 opacity: 1;
             }
-            .line.ssh-copy.copied .hint {
+            .line.ssh-copy.copied .hint,
+            .terminal-line.ssh-copy.copied .hint {
                 color: var(--text);
                 opacity: 1;
             }
@@ -393,15 +397,26 @@
             .terminal-block {
                 display: flex;
                 flex-direction: column;
-                gap: 9px;
+                gap: 0;
             }
             .terminal-line {
                 color: var(--muted);
                 max-width: 760px;
+                min-height: 1.7em;
+                white-space: pre-wrap;
             }
             .terminal-line .pl {
                 color: var(--dim);
                 margin-right: 18px;
+            }
+            .terminal-line.ssh-copy .pl {
+                font-size: 11px;
+                letter-spacing: 0.14em;
+                margin-right: 10px;
+            }
+            .terminal-line.ssh-copy .tx {
+                color: var(--text);
+                letter-spacing: 0.05em;
             }
             .terminal-line .w,
             .terminal-line a {
@@ -413,7 +428,7 @@
             }
             .terminal-prize {
                 display: grid;
-                grid-template-columns: 170px 72px minmax(150px, 1fr);
+                grid-template-columns: 160px 72px minmax(150px, 1fr);
                 column-gap: 8px;
                 align-items: baseline;
             }
@@ -422,6 +437,9 @@
             }
             .terminal-prize .amount {
                 color: var(--text);
+            }
+            .terminal-prize .detail {
+                margin-left: 10px;
             }
             .terminal-error {
                 color: #b76b6b;
@@ -571,13 +589,13 @@
                 const asciiTimers = [];
 
                 const HELP_ROWS = [
-                    ["start", "how to begin"],
                     ["arcus", "what this is"],
+                    ["start", "how to begin"],
                     ["prize", "what you can win"],
                     ["submission", "how to submit"],
                     ["write-up", "what makes a good one"],
-                    ["contact", "reach us"],
                     ["whois", "about us"],
+                    ["contact", "reach us"],
                     ["clear", "clear the screen"],
                 ];
 
@@ -610,8 +628,8 @@
                         title: "submission - how to submit your answer",
                         lines: [
                             "email arcus@augustalabs.ai with:",
-                            "1. write-up    (required)        how you got there",
-                            "2. proof        (optional)       unique id from a correct flag",
+                            " 1. write-up    (required)        how you got there",
+                            " 2. proof       (optional)        unique id from a correct flag",
                             "the write-up is your shot at the 2000€ best write-up, flag or not.",
                             "the proof is your shot at the 1000€ first blood, if you find it first.",
                             "unlimited attempts, reviewed on a rolling basis. we interview as we go.",
@@ -936,6 +954,31 @@
                         command.lines.forEach((text) => {
                             const line = document.createElement("div");
                             line.className = "terminal-line";
+                            if (text === SSH_COMMAND) {
+                                line.classList.add("ssh-copy");
+                                const pl = document.createElement("span");
+                                pl.className = "pl";
+                                pl.textContent = ">";
+                                const tx = document.createElement("span");
+                                tx.className = "tx";
+                                tx.textContent = text;
+                                line.append(pl, " ", tx);
+                                wireSshCopyLine(line);
+                                block.appendChild(line);
+                                return;
+                            }
+                            if (text.startsWith(" 1. write-up")) {
+                                line.innerHTML =
+                                    '<span class="pl">&gt;</span> 1. <span class="w">write-up</span>    (required)        how you got there';
+                                block.appendChild(line);
+                                return;
+                            }
+                            if (text.startsWith(" 2. proof")) {
+                                line.innerHTML =
+                                    '<span class="pl">&gt;</span> 2. <span class="w">proof</span>       (optional)        unique id from a correct flag';
+                                block.appendChild(line);
+                                return;
+                            }
                             line.innerHTML = '<span class="pl">&gt;</span>' + text;
                             block.appendChild(line);
                         });
@@ -1031,14 +1074,7 @@
                         await typeLine(tx, item.t, 16);
                         if (item.copy) {
                             sshCopyLine = div;
-                            const hint = document.createElement("span");
-                            hint.className = "hint";
-                            hint.textContent = "# copy to clipboard";
-                            div.appendChild(hint);
-                            div.addEventListener("click", copyCommand);
-                            div.addEventListener("mouseleave", () => {
-                                div.classList.remove("copy-cooldown");
-                            });
+                            wireSshCopyLine(div);
                         }
                         await wait(item.cls === "title" ? 260 : 120);
                     }
@@ -1056,7 +1092,18 @@
                 }
 
                 // click the ssh line to copy it
-                async function copyCommand() {
+                function wireSshCopyLine(line) {
+                    const hint = document.createElement("span");
+                    hint.className = "hint";
+                    hint.textContent = "# copy to clipboard";
+                    line.appendChild(hint);
+                    line.addEventListener("click", () => copyCommand(line));
+                    line.addEventListener("mouseleave", () => {
+                        line.classList.remove("copy-cooldown");
+                    });
+                }
+
+                async function copyCommand(targetLine = sshCopyLine) {
                     try {
                         await navigator.clipboard.writeText(SSH_COMMAND);
                     } catch (e) {
@@ -1071,16 +1118,16 @@
                         } catch (_) {}
                         ta.remove();
                     }
-                    if (!sshCopyLine) return;
-                    const hint = sshCopyLine.querySelector(".hint");
+                    if (!targetLine) return;
+                    const hint = targetLine.querySelector(".hint");
                     if (hint) hint.textContent = "# copied";
-                    sshCopyLine.classList.add("copied");
-                    clearTimeout(copyCommand._t);
-                    copyCommand._t = setTimeout(() => {
-                        sshCopyLine.classList.remove("copied");
-                        sshCopyLine.classList.add("copy-cooldown");
-                        clearTimeout(copyCommand._resetText);
-                        copyCommand._resetText = setTimeout(() => {
+                    targetLine.classList.add("copied");
+                    clearTimeout(targetLine._copyTimer);
+                    targetLine._copyTimer = setTimeout(() => {
+                        targetLine.classList.remove("copied");
+                        targetLine.classList.add("copy-cooldown");
+                        clearTimeout(targetLine._resetTimer);
+                        targetLine._resetTimer = setTimeout(() => {
                             if (hint) hint.textContent = "# copy to clipboard";
                         }, 220);
                     }, 900);
