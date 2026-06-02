@@ -690,6 +690,7 @@
                 const pad = (n) => String(n).padStart(2, "0");
                 let timeEl = null; // filled once the "time left" line is printed
                 let sshCopyLine = null;
+                let showInitialPlaceholder = true;
                 const asciiTimers = [];
                 const caretMeasure = document.createElement("span");
                 caretMeasure.style.position = "fixed";
@@ -1135,6 +1136,8 @@
                 function runTerminalCommand(rawValue) {
                     const raw = rawValue.trim();
                     if (!raw) return;
+                    showInitialPlaceholder = false;
+                    terminalInput.placeholder = "";
                     const normalized = normalizeCommand(raw);
                     terminalInput.value = "";
                     updateTerminalCaret();
@@ -1179,7 +1182,10 @@
                     const caretText = terminalInput.value.slice(0, terminalInput.selectionStart || 0);
                     caretMeasure.textContent = caretText;
                     terminalInputWrap.style.setProperty("--caret-x", caretMeasure.offsetWidth + "px");
-                    terminalInputWrap.classList.toggle("has-placeholder", terminalInput.value.length === 0);
+                    terminalInputWrap.classList.toggle(
+                        "has-placeholder",
+                        showInitialPlaceholder && terminalInput.value.length === 0,
+                    );
                 }
 
                 async function typeLine(target, html, speed) {
