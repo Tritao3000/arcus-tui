@@ -381,15 +381,38 @@
                 color: var(--text);
                 letter-spacing: 0.05em;
             }
-            .terminal-input {
+            .terminal-input-wrap {
+                position: relative;
                 flex: 1;
                 min-width: 140px;
+            }
+            .terminal-input-wrap::after {
+                content: "";
+                position: absolute;
+                left: var(--caret-x, 0px);
+                top: 50%;
+                width: 0.86ch;
+                height: 0.95em;
+                background: var(--text);
+                opacity: 0;
+                pointer-events: none;
+                transform: translateY(-50%);
+                animation: blink 1.05s step-end infinite;
+            }
+            .terminal-input-wrap:focus-within::after {
+                opacity: 1;
+            }
+            .terminal-input-wrap.has-placeholder .terminal-input {
+                padding-left: calc(0.86ch + 3px);
+            }
+            .terminal-input {
+                width: 100%;
                 border: 0;
                 outline: 0;
                 background: transparent;
                 font: inherit;
                 line-height: inherit;
-                caret-color: var(--text);
+                caret-color: transparent;
             }
             .terminal-input::placeholder {
                 color: #3f3f3f;
@@ -626,15 +649,17 @@
                     <div class="terminal-history" id="terminalHistory"></div>
                     <form class="terminal-input-row" id="terminalForm" autocomplete="off">
                         <span class="terminal-prompt">$</span>
-                        <input
-                            class="terminal-input"
-                            id="terminalInput"
-                            type="text"
-                            inputmode="text"
-                            spellcheck="false"
-                            aria-label="terminal command"
-                            placeholder="help"
-                        />
+                        <span class="terminal-input-wrap has-placeholder" id="terminalInputWrap">
+                            <input
+                                class="terminal-input"
+                                id="terminalInput"
+                                type="text"
+                                inputmode="text"
+                                spellcheck="false"
+                                aria-label="terminal command"
+                                placeholder="type help for more info"
+                            />
+                        </span>
                     </form>
                 </div>
             </div>
@@ -660,11 +685,19 @@
                 const terminalHistory = document.getElementById("terminalHistory");
                 const terminalForm = document.getElementById("terminalForm");
                 const terminalInput = document.getElementById("terminalInput");
+                const terminalInputWrap = document.getElementById("terminalInputWrap");
                 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
                 const pad = (n) => String(n).padStart(2, "0");
                 let timeEl = null; // filled once the "time left" line is printed
                 let sshCopyLine = null;
                 const asciiTimers = [];
+                const caretMeasure = document.createElement("span");
+                caretMeasure.style.position = "fixed";
+                caretMeasure.style.left = "-9999px";
+                caretMeasure.style.top = "-9999px";
+                caretMeasure.style.visibility = "hidden";
+                caretMeasure.style.whiteSpace = "pre";
+                document.body.appendChild(caretMeasure);
 
                 const HELP_ROWS = [
                     ["arcus", "what this is"],
@@ -1104,6 +1137,7 @@
                     if (!raw) return;
                     const normalized = normalizeCommand(raw);
                     terminalInput.value = "";
+                    updateTerminalCaret();
 
                     if (normalized === "clear") {
                         clearAsciiTimers();
@@ -1136,6 +1170,16 @@
                     }
 
                     scrollToTerminalEnd();
+                }
+
+                function updateTerminalCaret() {
+                    const font = getComputedStyle(terminalInput);
+                    caretMeasure.style.font = font.font;
+                    caretMeasure.style.letterSpacing = font.letterSpacing;
+                    const caretText = terminalInput.value.slice(0, terminalInput.selectionStart || 0);
+                    caretMeasure.textContent = caretText;
+                    terminalInputWrap.style.setProperty("--caret-x", caretMeasure.offsetWidth + "px");
+                    terminalInputWrap.classList.toggle("has-placeholder", terminalInput.value.length === 0);
                 }
 
                 async function typeLine(target, html, speed) {
@@ -1236,6 +1280,10 @@
                     event.preventDefault();
                     runTerminalCommand(terminalInput.value);
                 });
+                terminalInput.addEventListener("input", updateTerminalCaret);
+                terminalInput.addEventListener("keyup", updateTerminalCaret);
+                terminalInput.addEventListener("click", updateTerminalCaret);
+                terminalInput.addEventListener("focus", updateTerminalCaret);
                 terminalInput.addEventListener("keydown", (event) => {
                     if (event.key !== "Enter") return;
                     event.preventDefault();
@@ -1246,6 +1294,7 @@
                 });
 
                 run();
+                updateTerminalCaret();
             })();
         </script>
     </body>
